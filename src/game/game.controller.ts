@@ -17,4 +17,14 @@ export class GameController {
     getGameById(@Param('gameId') gameId: number) {
         return this.gameService.getGameById(gameId);
     }
+
+    @Get('deaths-by-world')
+    getDeathsByWorld(): number[] {
+        return this.gameService.getDeathsByWorld();
+    }
+
+    @Get('statistics')
+    getAllGameStatistics() {
+        return this.gameService.getAllGameStatistics();
+    }
 }

@@ -1,5 +1,6 @@
 import * as fs from 'node:fs';
 import { Injectable } from '@nestjs/common';
+
 import { Game } from './entities/game.entity';
 
 @Injectable()
@@ -42,7 +43,7 @@ export class GameService {
                 const match = line.match(/Kill:\s*\d+\s*\d+\s*\d+: ([^\s]+)\skilled\s([^\s]+)\sby\s(.+)/);
 
                 if (match) {
-                    const [, killedBy, killed, cause] = match;
+                    const [, cause] = match;
 
                     if (currentGame) {
                         if (cause === 'MOD_TRIGGER_HURT') {
@@ -65,5 +66,24 @@ export class GameService {
 
     getAllGames(): Game[] {
         return this.games;
+    }
+
+    getDeathsByWorld(): number[] {
+        return this.games.map(game => game.deathsByWorld);
+    }
+
+    getAllGameStatistics(): {
+        totalDeaths: number;
+        deathsByCause: {
+            [key: string]: number;
+        };
+        deathsByWorld: number;
+    } []
+    {
+        return this.games.map(game => ({
+            totalDeaths: game.totalDeaths,
+            deathsByCause: game.deathsByCause,
+            deathsByWorld: game.deathsByWorld,
+        }));
     }
 }

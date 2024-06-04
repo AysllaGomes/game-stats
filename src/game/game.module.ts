@@ -8,6 +8,8 @@ import { GameController } from './game.controller';
   providers: [
     GameService,
   ],
-  controllers: [GameController]
+  controllers: [
+    GameController
+  ]
 })
 export class GameModule {}
