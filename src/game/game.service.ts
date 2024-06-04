@@ -33,7 +33,7 @@ export class GameService {
                     totalDeaths: 0,
                     deathsByCause: {},
                     deathsByWorld: 0,
-                    events: [] // Inicialize o array de eventos
+                    events: []
                 };
             } else if (line.includes('ShutdownGame')) {
                 if (currentGame) {
