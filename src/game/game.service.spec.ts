@@ -86,28 +86,26 @@ describe('GameService', () => {
 
   describe('getDeathsByWorld', () => {
     it('should return an array of deaths by world for each game', () => {
-      const mockGames: Game[] = [{
+      service['games'] = [{
         id: 1,
         totalDeaths: 0,
         deathsByCause: {},
         deathsByWorld: 2,
         events: [],
       }];
-      service['games'] = mockGames;
       expect(service.getDeathsByWorld()).toEqual([2]);
     });
   });
 
   describe('getAllGameStatistics', () => {
     it('should return statistics for all games', () => {
-      const mockGames: Game[] = [{
+      service['games'] = [{
         id: 1,
         totalDeaths: 1,
         deathsByCause: { 'MOD_TRIGGER_HURT': 1 },
         deathsByWorld: 1,
         events: [],
       }];
-      service['games'] = mockGames;
       expect(service.getAllGameStatistics()).toEqual([{
         totalDeaths: 1,
         deathsByCause: { 'MOD_TRIGGER_HURT': 1 },
@@ -118,14 +116,13 @@ describe('GameService', () => {
 
   describe('getGameStatistics', () => {
     it('should return statistics for a specific game by index', () => {
-      const mockGames: Game[] = [{
+      service['games'] = [{
         id: 1,
         totalDeaths: 1,
         deathsByCause: { 'MOD_TRIGGER_HURT': 1 },
         deathsByWorld: 1,
         events: [],
       }];
-      service['games'] = mockGames;
       expect(service.getGameStatistics(0)).toEqual({
         totalDeaths: 1,
         deathsByCause: { 'MOD_TRIGGER_HURT': 1 },
@@ -134,15 +131,14 @@ describe('GameService', () => {
     });
 
     it('should return a message if the game is not found', () => {
-      const mockGames: Game[] = [];
-      service['games'] = mockGames;
+      service['games'] = [];
       expect(service.getGameStatistics(0)).toEqual({ message: 'Game not found' });
     });
   });
 
   describe('getRankingByGame', () => {
     it('should return ranking by game index', () => {
-      const mockGames: Game[] = [{
+      service['games'] = [{
         id: 1,
         totalDeaths: 0,
         deathsByCause: {},
@@ -153,15 +149,13 @@ describe('GameService', () => {
           { type: 'Kill', killer: '<world>', killed: 'player1', cause: 'MOD_TRIGGER_HURT' },
         ],
       }];
-      service['games'] = mockGames;
       expect(service.getRankingByGame(0)).toEqual([
         { player: 'player1', score: 1 }
       ]);
     });
 
     it('should return null if the game is not found', () => {
-      const mockGames: Game[] = [];
-      service['games'] = mockGames;
+      service['games'] = [];
       expect(service.getRankingByGame(0)).toBeNull();
     });
   });
