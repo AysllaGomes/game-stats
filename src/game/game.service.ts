@@ -109,6 +109,17 @@ export class GameService {
         }));
     }
 
+    getGameStatistics(index: number): any {
+        const game: Game = this.games[index];
+        if (!game) { return { message: 'Game not found' }; }
+
+        return {
+            totalDeaths: game.totalDeaths,
+            deathsByCause: game.deathsByCause,
+            deathsByWorld: game.deathsByWorld,
+        };
+    }
+
     getGameByIndex(index: number): Game | undefined {
         return this.games[index];
     }
@@ -116,8 +127,6 @@ export class GameService {
     getRankingByGame(index: number): any {
         const game: Game = this.getGameByIndex(index);
         if (!game) { return null; }
-
-        console.log('game', game);
 
         const playerScores: { [player: string]: number } = {};
         const playerAliases: { [player: string]: string } = {};

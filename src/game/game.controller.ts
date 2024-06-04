@@ -28,13 +28,19 @@ export class GameController {
         return this.gameService.getAllGameStatistics();
     }
 
+    @Get(':index/statistics')
+    getGameStatistics(@Param('index') index: string) {
+        const gameIndex: number = parseInt(index, 10);
+        return this.gameService.getGameStatistics(gameIndex);
+    }
+
     @Get(':index/ranking')
     getRankingByGame(@Param('index') index: string) {
-        const gameIndex = parseInt(index, 10);
+        const gameIndex: number = parseInt(index, 10);
         const ranking = this.gameService.getRankingByGame(gameIndex);
-        if (ranking === null) {
-            return { message: 'Game not found' };
-        }
+
+        if (ranking === null) { return { message: 'Game not found' }; }
+
         return ranking;
     }
 }
