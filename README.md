@@ -19,3 +19,6 @@ Eu como player, quero ver o ranking de cada partida para saber o vencedor e meu 
 ## História 3
 
 Eu como administrador do jogo, quero poder consultar as estatísticas de um jogo específicou ou de todos os jogos de maneira estruturada por uma API para montar uma visualização para os jogadores
+
+# Collection Postman
+**Caminho:** 'postman/GameStats.postman_collection.json'
