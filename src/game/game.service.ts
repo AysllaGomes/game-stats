@@ -32,7 +32,8 @@ export class GameService {
                 currentGame = {
                     totalDeaths: 0,
                     deathsByCause: {},
-                    deathsByWorld: 0
+                    deathsByWorld: 0,
+                    events: [] // Inicialize o array de eventos
                 };
             } else if (line.includes('ShutdownGame')) {
                 if (currentGame) {
@@ -43,15 +44,36 @@ export class GameService {
                 const match = line.match(/Kill:\s*\d+\s*\d+\s*\d+: ([^\s]+)\skilled\s([^\s]+)\sby\s(.+)/);
 
                 if (match) {
-                    const [, cause] = match;
+                    const [, killer, killed, cause] = match;
 
                     if (currentGame) {
+                        currentGame.events.push({
+                            type: 'Kill',
+                            killer,
+                            killed,
+                            cause
+                        });
+
                         if (cause === 'MOD_TRIGGER_HURT') {
                             currentGame.deathsByWorld = (currentGame.deathsByWorld || 0) + 1;
                         } else {
                             currentGame.deathsByCause[cause] = (currentGame.deathsByCause[cause] || 0) + 1;
                         }
                         currentGame.totalDeaths = (currentGame.totalDeaths || 0) + 1;
+                    }
+                }
+            } else if (line.includes('ClientUserinfoChanged')) {
+                const match = line.match(/ClientUserinfoChanged:\s*(\d+)\sn\\([^\s]+)\\/);
+
+                if (match) {
+                    const [, id, newName] = match;
+
+                    if (currentGame) {
+                        currentGame.events.push({
+                            type: 'ClientUserinfoChanged',
+                            id,
+                            newName
+                        });
                     }
                 }
             }
@@ -85,5 +107,46 @@ export class GameService {
             deathsByCause: game.deathsByCause,
             deathsByWorld: game.deathsByWorld,
         }));
+    }
+
+    getGameByIndex(index: number): Game | undefined {
+        return this.games[index];
+    }
+
+    getRankingByGame(index: number): any {
+        const game: Game = this.getGameByIndex(index);
+        if (!game) { return null; }
+
+        console.log('game', game);
+
+        const playerScores: { [player: string]: number } = {};
+        const playerAliases: { [player: string]: string } = {};
+
+        if (game.events) {
+            game.events.forEach(event => {
+                if (event.type === 'Kill') {
+                    const killer = event.killer;
+                    const killed = event.killed;
+                    const cause = event.cause;
+
+                    if (killer !== '<world>') {
+                        const killerName = playerAliases[killer] || killer;
+                        playerScores[killerName] = (playerScores[killerName] || 0) + 1;
+                    }
+
+                    const killedName = playerAliases[killed] || killed;
+                    if (cause === 'MOD_TRIGGER_HURT') {
+                        playerScores[killedName] = (playerScores[killedName] || 0) - 1;
+                    }
+                } else if (event.type === 'ClientUserinfoChanged') {
+                    const { id, newName } = event;
+                    playerAliases[id] = newName;
+                }
+            });
+        }
+
+        return Object.keys(playerScores)
+            .map(player => ({ player, score: playerScores[player] }))
+            .sort((a, b) => b.score - a.score);
     }
 }
